@@ -73,11 +73,7 @@
           name="email"
           placeholder="Confirm password"
           formControlName="confirmPassword"
-          [attr.aria-invalid]="
-            confirmPasswordField?.touched
-              ? form?.hasError('match_password')
-              : ''
-          "
+          [attr.aria-invalid]="confirmPasswordField?.touched ? form.hasError('match_password') : '' "
         />
         <ng-container *ngIf="confirmPasswordField?.touched && form?.errors">
           <small *ngIf="form?.hasError('match_password')">*Not matching</small>
