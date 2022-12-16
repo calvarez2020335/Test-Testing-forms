@@ -13,15 +13,15 @@ fdescribe('RegisterFormComponent', () => {
     const spy = jasmine.createSpyObj('UsersService', ['create'])
 
     await TestBed.configureTestingModule({
-      declarations: [ RegisterFormComponent],
+      declarations: [RegisterFormComponent],
       imports: [
         ReactiveFormsModule,
       ],
       providers: [
-        { provide: UsersService, useValue: spy}
+        { provide: UsersService, useValue: spy }
       ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -33,4 +33,50 @@ fdescribe('RegisterFormComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should the form be invalid', () => {
+
+    component.form.patchValue({
+      name: 'name',
+      email: 'email@example.com',
+      password: 'password123',
+      confirmPassword: 'password123',
+      checkTerms: false,
+    })
+
+    expect(component.form.invalid).toBeTruthy();
+
+  })
+
+  describe('test for emailField', () => {
+    it('should the email be invalid', () => {
+      component.emailField?.setValue('esto es un correo');
+      expect(component.emailField?.invalid).withContext('wrong emial').toBeTruthy();
+
+      component.emailField?.setValue('');
+      expect(component.emailField?.invalid).withContext('empty').toBeTruthy();
+    })
+  })
+
+  describe('test for password field', () => {
+
+    it('should the password field be invalid', () => {
+
+      component.passwordField?.setValue('');
+      expect(component.passwordField?.invalid).withContext('empty').toBeTruthy();
+
+      component.passwordField?.setValue('12345');
+      expect(component.passwordField?.invalid).withContext('12345').toBeTruthy();
+      
+      component.passwordField?.setValue('adfasdfasdfasdfadsfadf');
+      expect(component.passwordField?.invalid).withContext('text dont contain number').toBeTruthy();
+
+      component.passwordField?.setValue('adfasdfasdfasdfadsfadf1');
+      expect(component.passwordField?.valid).withContext('right').toBeTruthy();
+
+    })
+
+  })
+
+
 });
