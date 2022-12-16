@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 import { generateManyProducts } from 'src/app/models/product.mock';
 import { ProductsService } from 'src/app/services/product.service';
-import { asyncData, asyncError, mockObservable, query, queryById, getText } from './../../../../testing'
+import { asyncData, asyncError, mockObservable, mockPromise, query, queryById, getText } from './../../../../testing';
 
 import { ProductsComponent } from './products.component';
 import { ProductComponent } from './../product/product.component';
@@ -93,10 +93,10 @@ describe('ProductsComponent', () => {
   });
 
   describe('test for callPromise', () => {
-    it('call promise', async () => {
+    it('call promise', async() => {
       // Arrange
       const mockValue = 'my mock string';
-      valueService.getPromiseValue.and.returnValue(Promise.resolve(mockValue));
+      valueService.getPromiseValue.and.returnValue(mockPromise(mockValue));
       // Act
       await component.callPromise();
       fixture.detectChanges();
@@ -108,19 +108,19 @@ describe('ProductsComponent', () => {
     it('should show "my mock string" in <p> when btn was clicked', fakeAsync(() => {
       // Arrange
       const mockMsg = 'my mock string';
-      valueService.getPromiseValue.and.returnValue(Promise.resolve(mockMsg));
-      //const btnDe = fixture.debugElement.query(By.css('[data-testid=".btn-promise"]'));
-      const btnDe = queryById(fixture, '.btn-promise')
+      valueService.getPromiseValue.and.returnValue(mockPromise(mockMsg));
+      // const btnDe = fixture.debugElement.query(By.css('[data-testid="btn-promise"]'));
+      const btnDe = queryById(fixture, 'btn-promise');
       // Act
       btnDe.triggerEventHandler('click', null);
       tick();
       fixture.detectChanges();
-      //const rtaDe = fixture.debugElement.query(By.css('p.rta'));
+      // const textRta = fixture.debugElement.query(By.css('p.rta'));
       const textRta = getText(fixture, 'rta');
       // Assert
       expect(component.rta).toEqual(mockMsg);
       expect(valueService.getPromiseValue).toHaveBeenCalled();
-      expect(textRta).toEqual(mockMsg);
+      expect(textRta).toContain(mockMsg);
     }));
   })
 
