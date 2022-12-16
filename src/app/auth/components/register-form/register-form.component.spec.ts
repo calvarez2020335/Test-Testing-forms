@@ -1,10 +1,11 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UsersService } from 'src/app/services/user.service';
-import { query, getText, queryById, setInputValue, mockObservable, asyncData } from 'src/testing';
+import { query, getText, queryById, setInputValue, mockObservable, asyncData, setCheckboxCalue, clickEvent } from 'src/testing';
 
 import { RegisterFormComponent } from './register-form.component';
 import { generateOneUser } from '../../../models/user.mock';
+import { clickElement } from '../../../../testing/click';
 
 fdescribe('RegisterFormComponent', () => {
   let component: RegisterFormComponent;
@@ -141,6 +142,36 @@ fdescribe('RegisterFormComponent', () => {
 
       component.register(new Event('submit'));
       expect(component.status).toEqual('loading')
+      tick();
+      fixture.detectChanges();
+      
+      expect(component.status).toEqual('success');     
+      expect(component.form.valid).toBeTruthy();
+      expect(userService.create).toHaveBeenCalled();  
+    }))
+
+    it('should send the form successfully demo UI', fakeAsync(() => {
+      
+      setInputValue(fixture, 'input#name', 'Nico');
+      setInputValue(fixture, 'input#email', 'email@email.com');
+      setInputValue(fixture, 'input#password', '123456');
+      setInputValue(fixture, 'input#confirmPassword', '123456');
+      setCheckboxCalue(fixture, 'input#terms', true);
+
+      console.log(component.form.value)
+
+      const mockUser = generateOneUser();
+      userService.create.and.returnValue(asyncData(mockUser));
+
+      //component.register(new Event('submit'));=> Con esta forma no funciona
+      //clickEvent(fixture, 'btn-submit', true) => Con esta forma no funciona
+
+      //query(fixture, 'form').triggerEventHandler('ngSubmit', new Event('submit')); => Con esta forma funciona
+      clickElement(fixture, 'btn-submit', true)
+
+
+      fixture.detectChanges();
+      expect(component.status).toEqual('loading');
       tick();
       fixture.detectChanges();
       
