@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UsersService } from 'src/app/services/user.service';
+import { query, getText, queryById } from 'src/testing';
 
 import { RegisterFormComponent } from './register-form.component';
 
@@ -56,6 +57,23 @@ fdescribe('RegisterFormComponent', () => {
       component.emailField?.setValue('');
       expect(component.emailField?.invalid).withContext('empty').toBeTruthy();
     })
+    
+    it('should the email be invalid FROM UI', () => {
+      
+      const inputDe = query(fixture, 'input#email');
+      const inputEL:HTMLInputElement = inputDe.nativeElement;
+
+      inputEL.value = 'esto no es un correo';
+      inputEL.dispatchEvent(new Event('input'));
+      inputEL.dispatchEvent(new Event('blur'));
+      fixture.detectChanges();
+      expect(component.emailField?.invalid).withContext('wrong email').toBeTruthy();
+
+      const textError = getText(fixture, 'emailField-email');
+      expect(textError).toEqual("*It's not a email")
+
+    })
+ 
   })
 
   describe('test for password field', () => {
