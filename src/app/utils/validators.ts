@@ -22,6 +22,11 @@ export class MyValidators {
   static matchPasswords(control: AbstractControl) {
     const password = control?.get('password')?.value;
     const confirmPassword = control?.get('confirmPassword')?.value;
+
+    if(password === undefined || confirmPassword === undefined){
+      throw new Error('matchsPasswords: field not found')
+    }
+
     if (password !== confirmPassword) {
       return {match_password: true};
     }
