@@ -6,6 +6,7 @@ import { query, getText, queryById, setInputValue, mockObservable, asyncData, se
 import { RegisterFormComponent } from './register-form.component';
 import { generateOneUser } from '../../../models/user.mock';
 import { clickElement } from '../../../../testing/click';
+import { asyncError } from '../../../../testing/async-data';
 
 fdescribe('RegisterFormComponent', () => {
   let component: RegisterFormComponent;
@@ -179,6 +180,35 @@ fdescribe('RegisterFormComponent', () => {
       expect(component.form.valid).toBeTruthy();
       expect(userService.create).toHaveBeenCalled();  
     }))
+
+    it('should send the form demo UI from "loading" to "Error"', fakeAsync(() => {
+      
+      setInputValue(fixture, 'input#name', 'Nico');
+      setInputValue(fixture, 'input#email', 'email@email.com');
+      setInputValue(fixture, 'input#password', '123456');
+      setInputValue(fixture, 'input#confirmPassword', '123456');
+      setCheckboxCalue(fixture, 'input#terms', true);
+
+      const mockUser = generateOneUser();
+      userService.create.and.returnValue(asyncError(mockUser));
+
+      //component.register(new Event('submit'));=> Con esta forma no funciona
+      //clickEvent(fixture, 'btn-submit', true) => Con esta forma no funciona
+
+      //query(fixture, 'form').triggerEventHandler('ngSubmit', new Event('submit')); => Con esta forma funciona
+      clickElement(fixture, 'btn-submit', true)
+
+
+      fixture.detectChanges();
+      expect(component.status).toEqual('loading');
+      tick();
+      fixture.detectChanges();
+      
+      expect(component.status).toEqual('error');     
+      expect(component.form.valid).toBeTruthy();
+      expect(userService.create).toHaveBeenCalled();  
+    }))
+
     
   })
 

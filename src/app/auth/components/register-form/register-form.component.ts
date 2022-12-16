@@ -24,14 +24,14 @@ export class RegisterFormComponent implements OnInit {
     }
   );
 
-  status : 'loading' | 'success' | 'error' | 'init' = 'init';
+  status: 'loading' | 'success' | 'error' | 'init' = 'init';
 
   constructor(
     private fb: FormBuilder,
     private usersService: UsersService
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   register(event: Event) {
     event.preventDefault();
@@ -39,11 +39,17 @@ export class RegisterFormComponent implements OnInit {
       this.status = 'loading';
       const value = this.form.value;
       this.usersService.create(value)
-      .subscribe((rta) => {
-        /* console.log(rta); */
-        //redirect
-        this.status = 'success'
-      });
+        .subscribe({
+          next: (value) => {
+            /* console.log(value); */
+            //redirect
+            this.status = 'success'
+          },
+          error: (err) => {
+            //redirer
+            this.status = 'error';
+          }
+        });
     } else {
       this.form.markAllAsTouched();
     }
