@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UsersService } from 'src/app/services/user.service';
-import { query, getText, queryById, setInputValue } from 'src/testing';
+import { query, getText, queryById, setInputValue, mockObservable } from 'src/testing';
 
 import { RegisterFormComponent } from './register-form.component';
+import { generateOneUser } from '../../../models/user.mock';
 
 fdescribe('RegisterFormComponent', () => {
   let component: RegisterFormComponent;
@@ -27,6 +28,7 @@ fdescribe('RegisterFormComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RegisterFormComponent);
+    userService = TestBed.inject(UsersService) as jasmine.SpyObj<UsersService>
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -106,6 +108,31 @@ fdescribe('RegisterFormComponent', () => {
 
     })
 
+  })
+
+  describe('test for form with services', () => {
+
+    it('should send the form success', () => {
+
+      component.form.patchValue({
+        name: 'name',
+        email: 'email@example.com',
+        password: 'password123',
+        confirmPassword: 'password123',
+        checkTerms: true,
+      })
+  
+      const mockUser = generateOneUser();
+
+      userService.create.and.returnValue(mockObservable(mockUser));
+
+      component.register(new Event('submit'));
+      expect(component.form.valid).toBeTruthy();
+      expect(userService.create).toHaveBeenCalled();
+
+  
+    })
+    
   })
 
 
