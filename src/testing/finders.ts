@@ -2,8 +2,18 @@ import { By } from "@angular/platform-browser";
 import { ComponentFixture } from '@angular/core/testing';
 import { Type } from "@angular/core";
 
+export function getText<T>(fixture: ComponentFixture<T>, testId:string){
+    const debugElement = queryById(fixture, testId);
+    const element:HTMLElement = debugElement.nativeElement;
+    return element.textContent;
+}
+
 export function query<T>(fixture: ComponentFixture<T>, selector:string) {
-    return fixture.debugElement.query(By.css(selector));
+    const debugElement = fixture.debugElement.query(By.css(selector));
+    if(!debugElement){
+        throw new Error(`query: Element with ${selector} not found`)
+    }
+    return debugElement;
 }
 
 export function queryById<T>(fixture: ComponentFixture<T>, testId:string) {
