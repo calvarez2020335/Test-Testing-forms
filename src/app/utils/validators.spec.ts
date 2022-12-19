@@ -3,7 +3,7 @@ import { UsersService } from '../services/user.service';
 import { MyValidators } from './validators'
 import { mockObservable } from '../../testing/async-data';
 
-fdescribe('Test for MyValidators', () => {
+describe('Test for MyValidators', () => {
 
     describe('Test for validPassword', () => {
 
