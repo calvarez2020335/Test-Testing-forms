@@ -1,5 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { UsersService } from '../services/user.service';
 import { MyValidators } from './validators'
+import { mockObservable } from '../../testing/async-data';
 
 fdescribe('Test for MyValidators', () => {
 
@@ -68,5 +70,23 @@ fdescribe('Test for MyValidators', () => {
 
     })
 
+    describe('Test for validateEmailAsync', () => {
+
+        it('should return null with email valid', (doneFn) => {
+            // Arrange
+            const userService: jasmine.SpyObj<UsersService> = jasmine.createSpyObj('UsersService', ['isAvailableByEmail']);
+            const control = new FormControl('nico@mail.com');
+            // Act
+            userService.isAvailableByEmail.and.returnValue(mockObservable({ isAvailable: true }));
+            const validator = MyValidators.validateEmailAsync(userService);
+            validator(control).subscribe(rta => {
+                expect(rta).toBeNull();
+                doneFn();
+            });
+
+
+        })
+
+    })
 
 })
